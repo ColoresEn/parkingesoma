@@ -7,7 +7,12 @@ const { auth } = NextAuth(authConfig);
 export default auth((request) => {
   if (!request.auth) {
     const signInUrl = new URL("/login", request.nextUrl.origin);
-    signInUrl.searchParams.set("callbackUrl", request.nextUrl.href);
+    const publicUrl = process.env.NEXTAUTH_URL ?? request.nextUrl.origin;
+    const callbackUrl = new URL(
+      `${request.nextUrl.pathname}${request.nextUrl.search}`,
+      publicUrl,
+    );
+    signInUrl.searchParams.set("callbackUrl", callbackUrl.toString());
     return NextResponse.redirect(signInUrl);
   }
 
