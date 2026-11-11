@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="border-t border-border/70 bg-background/60 text-center backdrop-blur-sm">
       <div className="mx-auto w-full max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>© <CopyrightYear /> Esoma S. L.</p>
-        <nav aria-label="Legal" className="p-4 flex-wrap items-center gap-x-4 gap-y-3 justify-center sm:flex">
+        <nav aria-label="Legal" className="flex-wrap items-center gap-x-4 gap-y-3 justify-center sm:flex">
           <Link href="/proteccion-datos/privacy-policy" className="transition-colors hover:text-foreground ">
             Política de privacidad
           </Link>
