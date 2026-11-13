@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "../../../auth";
 import AdminNavigationLinks from "@/components/admin/AdminNavigationLinks";
 import { connection } from "next/server";
 

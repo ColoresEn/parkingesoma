@@ -32,11 +32,7 @@ interface UserButtonProps {
 const UserButton = ({ user }: UserButtonProps) => {
   const router = useRouter();
 
-  async function handleSignOut() {
-    await signOut({ redirect: false });
-    router.push("/");
-    router.refresh();
-  }
+ 
 
   return (
     <DropdownMenu>

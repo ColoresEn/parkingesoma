@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "../../../../../auth";
 import { getContacts } from "@/actions/contact-action";
 import AdminMessagesTable from "@/components/admin/AdminMessagesTable";
 import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";

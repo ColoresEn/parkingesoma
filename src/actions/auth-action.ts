@@ -1,7 +1,8 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn } from "../../auth";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 import { loginSchema, registerSchema } from "@/lib/zod";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
@@ -24,7 +25,8 @@ export const loginAction = async (values: z.infer<typeof loginSchema>) => {
     }
     return { error: "error 500" };
   }
-  
+
+  revalidatePath("/");
 };
 
 export const registerAction = async (

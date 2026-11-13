@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { auth } from "../../auth";
 import { db } from "@/lib/db";
 import { UpdateProfileValues, updateProfileSchema } from "@/lib/validation";
 import { revalidatePath } from "next/cache";

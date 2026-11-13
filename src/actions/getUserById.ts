@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { auth } from "@/auth";
+import { auth } from "../../auth";
 
 interface IParams {
   userId: string;
