@@ -1,6 +1,6 @@
 "use client";
 
-import { updateTodoAction } from "@/actions/todo.actions";
+import { createTodoAction, updateTodoAction } from "@/actions/todo.actions";
 import {
   Dialog,
   DialogContent,
@@ -18,9 +18,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { TodoFormValues, todoFormSchema } from "@/schema";
+import {
+  TodoFormInputValues,
+  TodoFormValues,
+  todoFormSchema,
+} from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pen } from "lucide-react";
+import { Pen, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -28,19 +32,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import Spinner from "@/components/Spinner";
 import { ITodo } from "@/interfaces";
-import { useToast } from "@/hooks/use-toast";
 
 const EditTodoForm = ({ todo }: { todo: ITodo }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  const defaultValues: Partial<TodoFormValues> = {
+  const defaultValues: Partial<TodoFormInputValues> = {
     title: todo.title,
-    body: todo.body ?? "",
+    body: todo.body as string,
     completed: todo.completed,
   };
 
-  const form = useForm<TodoFormValues>({
+  // const todos = await getTodoListAction();
+  const form = useForm<TodoFormInputValues, unknown, TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
     defaultValues,
     mode: "onChange",
@@ -48,49 +51,38 @@ const EditTodoForm = ({ todo }: { todo: ITodo }) => {
 
   const onSubmit = async (data: TodoFormValues) => {
     setLoading(true);
-    try {
-      await updateTodoAction({
-        id: todo.id,
-        title: data.title,
-        body: data.body ?? "",
-        completed: data.completed,
-      });
-      toast({ description: "Se ha actualizado la tarea." });
-      setOpen(false);
-    } catch {
-      toast({
-        variant: "destructive",
-        description: "No se pudo actualizar la tarea. Inténtalo de nuevo.",
-      });
-    } finally {
-      setLoading(false);
-    }
+    await updateTodoAction({
+      id: todo.id,
+      title: data.title,
+      body: data.body as string,
+      completed: data.completed,
+    });
+    setLoading(false);
+    setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        render={
-          <Button variant="ghost" size="icon" aria-label={`Editar ${todo.title}`}>
-          <Pen aria-hidden="true" size={16} />
-          </Button>
-        }
-      />
+        render={<Button className="ml-auto bg-violet-700" />}
+      >
+          <Pen   size={16} />
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar tarea</DialogTitle>
+          <DialogTitle>Edit this Todo</DialogTitle>
         </DialogHeader>
         <div className="py-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Título</FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Título de la tarea" {...field} />
+                      <Input placeholder="Go to gym" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,7 +94,7 @@ const EditTodoForm = ({ todo }: { todo: ITodo }) => {
                 name="body"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Descripción</FormLabel>
+                    <FormLabel>Short Description</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Tell us a little bit about yourself"
@@ -110,8 +102,8 @@ const EditTodoForm = ({ todo }: { todo: ITodo }) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                    Añade contexto para recordar qué tienes que hacer.
+                    <FormDescription className="text-violet-400">
+                      You can write a short description about your next todo.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -130,10 +122,11 @@ const EditTodoForm = ({ todo }: { todo: ITodo }) => {
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel>Marcar como completada</FormLabel>
+                      <FormLabel>Completed</FormLabel>
                     </div>
-                    <FormDescription>
-                      Las tareas nuevas quedan pendientes por defecto.
+                    <FormDescription className="text-violet-400">
+                      Your to-do item will be uncompleted by default unless you
+                      checked it.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -141,9 +134,11 @@ const EditTodoForm = ({ todo }: { todo: ITodo }) => {
               />
               <Button type="submit" disabled={loading}>
                 {loading ? (
-                  <><Spinner /> Guardando…</>
+                  <>
+                    <Spinner /> Saving
+                  </>
                 ) : (
-                  "Guardar cambios"
+                  "Save"
                 )}
               </Button>
             </form>

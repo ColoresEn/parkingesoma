@@ -34,20 +34,3 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Playwright E2E tests
-
-This project uses [Playwright](https://playwright.dev/) with the `playwright-best-practices` skill conventions (role-first locators, web-first assertions, `baseURL`, CI-safe retries/artifacts).
-
-```bash
-npm install
-npm run test:e2e:install
-npm run test:e2e
-```
-
-Useful commands:
-- `npm run test:e2e:ui` — interactive UI mode
-- `npm run test:e2e:report` — open the last HTML report
-- `npx playwright test tests/e2e/home.spec.ts` — run a specific file
-
-Playwright starts the Next.js app automatically via `playwright.config.ts` (`npm run dev` locally, `npm run build && npm run start` in CI). Set `PORT` if you need a non-default port.

@@ -3,12 +3,11 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/actions/user-action";
-import { useState, type FormEvent } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import ImageUpload from "./ImageUpload";
+import Input from "./input/Input";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 interface UserProps {
   name: string;
@@ -24,81 +23,107 @@ export default function UserEditForm({
   userId,
 }: UserProps) {
   const router = useRouter();
-  const { update: updateSession } = useSession();
-  const [isEditing, setIsEditing] = useState(false);
+  const session = useSession();
+  const [onActive, setOnActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [state, setState] = useState({ name, email, image, userId });
+  const initialState = {
+    name,
+    email,
+    image,
+    userId,
+  };
+  const [state, setState] = useState(initialState);
   const { toast } = useToast();
-
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    setState({ ...state, [event.target.name]: event.target.value });
+  }
+  const onSubmit = async (event: FormEvent) => {
     setIsLoading(true);
+
+    event.preventDefault();
     try {
       await updateProfile(state);
-      await updateSession();
-      toast({ description: "Tu perfil se ha actualizado." });
-      setIsEditing(false);
+      toast({ description: "Profile updated." });
+      session.update();
+      router.push("/admin/settings");
       router.refresh();
-    } catch {
+    } catch (error) {
       toast({
         variant: "destructive",
-        description: "No se pudo actualizar el perfil. Inténtalo de nuevo.",
+        description: "An error occurred. Please try again.",
       });
-    } finally {
-      setIsLoading(false);
     }
-  }
+  };
+
+  const setCustomValue = (id: any, value: any) => {
+    setState((prevValues) => ({
+      ...prevValues,
+      [id]: value,
+    }));
+  };
 
   return (
-    <div>
+    <div className="md:rounded-2xl px-10 py-6 shadow-input text-right ">
       <Button
-        type="button"
-        variant="outline"
-        onClick={() => setIsEditing((editing) => !editing)}
-        aria-expanded={isEditing}
-      >
-        {isEditing ? "Cancelar edición" : "Editar perfil"}
-      </Button>
+        onClick={() => setOnActive(!onActive)}
+        className="uppercase   p-6 "
+      >edit</Button>
 
-      {isEditing && (
-        <form onSubmit={onSubmit} className="mt-5 max-w-xl space-y-5">
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Imagen de perfil</p>
+      {onActive && (
+        <div className=" text-left mt-4 justify-center max-w-min flex-wrap mx-auto  ">
+          <form onSubmit={onSubmit}>
+            <p >
+              Change avatar:
+            </p>
+
             <ImageUpload
-              value={state.image}
-              onChange={(image) => setState((current) => ({ ...current, image }))}
+              value={state.image as string}
+              onChange={(value) => setCustomValue("image", value)}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="profile-name">Nombre</Label>
+          
+            <p>
+              Change Name:
+            </p>
             <Input
-              placeholder="Tu nombre"
-              id="profile-name"
+              placeholder="Name"
+              id="name"
               type="text"
               value={state.name}
-              onChange={(event) =>
-                setState((current) => ({ ...current, name: event.target.value }))
-              }
-              autoComplete="name"
+              name="name"
+              onChange={handleChange}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="profile-email">Correo electrónico</Label>
+
+            <p>
+              Change Email:
+            </p>
             <Input
-              placeholder="tu@correo.com"
-              id="profile-email"
-              type="email"
+              placeholder="Email"
+              id="email"
+              type="text"
               value={state.email}
-              onChange={(event) =>
-                setState((current) => ({ ...current, email: event.target.value }))
-              }
-              autoComplete="email"
+              name="email"
+              onChange={handleChange}
             />
-          </div>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Guardando…" : "Guardar cambios"}
-          </Button>
-        </form>
+
+            <div className="flex justify-between items-center   ">
+              <Button
+                type="submit"
+                className=" uppercase  "
+                disabled={isLoading}
+              >
+                Submit 
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setOnActive(!onActive)}
+                className=" uppercase  "
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );

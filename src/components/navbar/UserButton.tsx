@@ -1,29 +1,11 @@
 "use client";
+
 import avatarPlaceholder from "@/assets/images/avatar_placeholder.png";
-import {
-  LayoutDashboard,
-  ListTodo,
-  LogOut,
-  MessageCircle,
-  Settings,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
-import type { User } from "next-auth";
-import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { signOut } from "next-auth/react";
+import type { User } from "next-auth";
 import { useRouter } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "../ui/dropdown-menu";
 
 interface UserButtonProps {
   user: User;
@@ -32,74 +14,42 @@ interface UserButtonProps {
 const UserButton = ({ user }: UserButtonProps) => {
   const router = useRouter();
 
- 
+  async function handleSignOut() {
+    await signOut({ redirect: false });
+    router.push("/");
+    router.refresh();
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full border-border/80 bg-card/70"
-            aria-label="Abrir menú de cuenta"
-          />
-        }
-      >
+    <details className="account-menu">
+      <summary className="avatar-trigger" aria-label="Open account menu">
         <Image
           src={user.image || avatarPlaceholder}
           alt=""
-          width={36}
-          height={36}
+          width={42}
+          height={42}
           priority
-          className="aspect-square rounded-full object-cover"
         />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>{user.name || "Tu cuenta"}</DropdownMenuLabel>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem render={<Link href="/admin/settings" />}>
-            <Settings />
-            Perfil
-          </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href="/admin/todos" />}>
-            <ListTodo />
-            Mis tareas
-          </DropdownMenuItem>
-          {user.role === "ADMIN" && ( 
-              <>
-          
-              <DropdownMenuItem render={<Link href="/admin/dashboard" />}>
-                <LayoutDashboard />
-                Panel de control
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/admin/users" />}>
-                <Users />
-                Usuarios
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/admin/messages" />}>
-                <MessageCircle />
-                Mensajes
-              </DropdownMenuItem>
-            </>
-          )}
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={async () => {
+      </summary>
+      <nav className="account-menu-content" aria-label="Account">
+        <strong>{user.name || "Your account"}</strong>
+        <Link href="/admin/settings">Profile</Link>
+        <Link href="/admin/todos">Todos</Link>
+        <Link href="/create">Share a wall</Link>
+        {user.role === "ADMIN" && (
+          <>
+            <Link href="/admin/users">Users</Link>
+            <Link href="/admin/messages">Messages</Link>
+          </>
+        )}
+        <button type="button"  onClick={async () => {
             await signOut({ redirect: false });
             router.push("/");
             router.refresh();
-          }}
-        >
-          <LogOut />
-          Cerrar sesión
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          }}>Sign out</button>
+      </nav>
+    </details>
   );
 };
+
 export default UserButton;

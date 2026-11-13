@@ -34,6 +34,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   session: { strategy: "jwt" },
+  callbacks: {
+    // jwt() se ejecuta cada vez que se crea o actualiza un token JWT.
+    // Aquí es donde puedes agregar información adicional al token.
+    jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.id  = user.id as string;
+      }
+      return token;
+    },
+    // session() se utiliza para agregar la información del token a la sesión del usuario,
+    // lo que hace que esté disponible en el cliente.
+    session({ session, token }) {
+      if (session.user) {
+        session.user.role = token.role;
+        session.user.id= token.id;
+        
+      }
+      return session;
+    },
+  },
   events: {
     // El evento linkAccount se dispara cuando una cuenta (proveedor OAuth: GitHub, Google, Facebook, etc.)  se vincula a un usuario existente en tu base de datos.
     async linkAccount({ user }) {

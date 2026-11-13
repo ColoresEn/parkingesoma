@@ -18,88 +18,46 @@ interface IProps {
 }
 
 export default function TodosTable({ todos }: IProps) {
-  const formatDate = (value: Date | string) =>
-    new Intl.DateTimeFormat("es-ES", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(new Date(value));
-
-  if (todos.length === 0) {
-    return (
-      <section
-        aria-label="Lista de tareas"
-        className="rounded-2xl border border-dashed border-border bg-card/70 px-6 py-12 text-center"
-      >
-        <h2 className="mb-2 text-lg font-semibold">Aún no tienes tareas</h2>
-        <p className="m-0 text-sm text-muted-foreground">
-          Crea una tarea para empezar a organizar tus pendientes.
-        </p>
-      </section>
-    );
-  }
-
   return (
-    <Table className="overflow-hidden rounded-2xl border border-border bg-card/90">
-      <TableCaption className="text-muted-foreground">
-        Tus tareas, ordenadas de la más reciente a la más antigua.
-      </TableCaption>
-      <TableHeader className="bg-secondary/60">
+    <Table className="font-bold bg-white border border-violet-800">
+      <TableCaption className="font-bold text-violet-600 ">A list of your todos.</TableCaption>
+      <TableHeader className="bg-violet-400 ">
         <TableRow>
-          <TableHead>Tarea</TableHead>
-          <TableHead>Estado</TableHead>
-          <TableHead className="hidden lg:table-cell">Creada</TableHead>
-          <TableHead className="hidden lg:table-cell">Actualizada</TableHead>
-          <TableHead className="text-right">Acciones</TableHead>
+          {/* <TableHead>ID</TableHead> */}
+          <TableHead className="font-bold text-black">Title</TableHead>
+          <TableHead className="font-bold text-black">Status</TableHead>
+          <TableHead className="font-bold text-black">Created At</TableHead>
+          <TableHead className="font-bold text-black">Updated At</TableHead>
+          <TableHead className="text-right ont-bold text-black">Actions</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="text-black border border-violet-600">
         {todos.map((todo) => (
-          <TableRow key={todo?.id}>
-            <TableCell className="max-w-64">
-              <span className={todo.completed ? "text-muted-foreground line-through" : "font-medium"}>
-                {todo.title}
-              </span>
-              {todo.body && (
-                <span className="mt-1 block line-clamp-2 text-xs font-normal text-muted-foreground">
-                  {todo.body}
-                </span>
-              )}
+          <TableRow key={todo?.id} className="border border-violet-800">
+            {/* <TableCell className="font-medium">{todo?.id}</TableCell> */}
+            <TableCell className={todo.completed ? "line-through" : ""}>
+              {todo?.title}
             </TableCell>
             <TableCell>
               {todo?.completed ? (
-                <Badge>Completada</Badge>
+                <Badge>Completed</Badge>
               ) : (
-                <Badge variant="secondary">Pendiente</Badge>
+                <Badge variant="secondary">Uncompleted</Badge>
               )}
             </TableCell>
-            <TableCell className="hidden whitespace-nowrap text-sm text-muted-foreground lg:table-cell">
-              {todo.createdAt ? (
-                <time dateTime={dayjs(todo.createdAt).toISOString()}>
-                  {formatDate(todo.createdAt)}
-                </time>
-              ) : (
-                "—"
-              )}
-            </TableCell>
-            <TableCell className="hidden whitespace-nowrap text-sm text-muted-foreground lg:table-cell">
-              {todo.updatedAt ? (
-                <time dateTime={dayjs(todo.updatedAt).toISOString()}>
-                  {formatDate(todo.updatedAt)}
-                </time>
-              ) : (
-                "—"
-              )}
-            </TableCell>
-            <TableCell className="text-right">
+            <TableCell>{dayjs(todo.createdAt).format("MMMM D YYYY")}</TableCell>
+            <TableCell>{dayjs(todo.updatedAt).format("MMMM D YYYY, H:MM A")}</TableCell>
+            <TableCell className="flex items-center justify-end space-x-2">
               <TodosTableActions todo={todo} />
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
-      <TableFooter className="bg-secondary/40">
+      <TableFooter className="bg-violet-300 text-black">
         <TableRow>
-          <TableCell colSpan={5} className="text-right text-sm text-muted-foreground">
-            {todos.length} {todos.length === 1 ? "tarea" : "tareas"}
+          <TableCell colSpan={4}>Total</TableCell>
+          <TableCell className="text-right">
+            {!todos.length ? "YOU DON'T HAVE ANY TODO YET!" : todos.length}
           </TableCell>
         </TableRow>
       </TableFooter>

@@ -26,40 +26,40 @@ export default function AdminUsersDirectory({
   }, [query, users]);
 
   return (
-    <section aria-label="Directorio de usuarios">
+    <section aria-label="Registered users">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <label className="relative block w-full sm:max-w-sm">
-          <span className="sr-only">Buscar usuarios</span>
+          <span className="sr-only">Search users</span>
           <Search
             aria-hidden="true"
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]"
           />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Buscar por nombre, correo o rol"
-            className="min-h-11 w-full rounded-xl border border-input bg-background px-3 py-2 pl-10 text-sm text-foreground placeholder:text-muted-foreground"
+            placeholder="Search by name, email, or role"
+            className="min-h-11 w-full rounded-[var(--radius)] border border-[var(--line)] bg-[var(--paper-raised)] py-2 pl-10 pr-3 text-sm text-[var(--ink)] placeholder:text-[var(--muted)]"
           />
         </label>
-        <p className="m-0 text-sm text-muted-foreground" aria-live="polite">
-          {filteredUsers.length} de {users.length} usuarios
+        <p className="m-0 text-sm text-[var(--muted)]" aria-live="polite">
+          Showing {filteredUsers.length} of {users.length}
         </p>
       </div>
 
       {filteredUsers.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border bg-card/70 px-6 py-12 text-center">
+        <div className="rounded-[var(--radius)] border border-dashed border-[var(--line)] bg-[var(--paper-raised)] px-6 py-12 text-center">
           <h2 className="mb-2 text-lg font-semibold">
-            {users.length === 0 ? "Aún no hay usuarios" : "No hay resultados"}
+            {users.length === 0 ? "No registered users yet" : "No matching users"}
           </h2>
-          <p className="m-0 text-sm text-muted-foreground">
+          <p className="m-0 text-sm text-[var(--muted)]">
             {users.length === 0
-              ? "Las cuentas nuevas aparecerán aquí."
-              : "Prueba con otro nombre, correo o rol."}
+              ? "New accounts will appear here."
+              : "Try another name, email address, or role."}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filteredUsers.map((user) => (
             <SingleUser key={user.id} data={user} />
           ))}

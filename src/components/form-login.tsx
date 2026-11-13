@@ -5,22 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { loginAction } from "@/actions/auth-action";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import Link from "next/link";
-/* import ButtonSocial from "./button-social";
-import { FaGithub, FaGoogle } from "react-icons/fa6"; */
 
 interface FormLoginProps {
   OAuthAccountNotLinked: boolean;
@@ -33,13 +20,10 @@ const FormLogin = ({ OAuthAccountNotLinked }: FormLoginProps) => {
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
-  async function onSubmit(values: z.infer<typeof loginSchema>) {
+  function onSubmit(values: z.infer<typeof loginSchema>) {
     setError(null);
     startTransition(async () => {
       const response = await loginAction(values);
@@ -53,61 +37,56 @@ const FormLogin = ({ OAuthAccountNotLinked }: FormLoginProps) => {
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-6xl items-center justify-center px-4 py-12 sm:px-6">
-      <Card className="surface-panel w-full max-w-md border-border/80 bg-card/90">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-semibold tracking-tight">Acceso</CardTitle>
-          <CardDescription>Inicia sesión para gestionar tu cuenta.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {OAuthAccountNotLinked && (
-            <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              Para confirmar tu identidad, accede con la misma cuenta que has utilizado antes.
-            </p>
-          )}
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="nombre@ejemplo.com" type="email" autoComplete="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contraseña</FormLabel>
-                    <FormControl>
-                      <Input placeholder="••••••••" type="password" autoComplete="current-password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {error && <p className="text-sm font-medium text-destructive">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending ? "Accediendo…" : "Enviar"}
-              </Button>
-              <p className="text-center text-sm text-muted-foreground">
-                ¿No tienes cuenta?{" "}
-                <Link className="font-medium text-primary transition-colors hover:text-primary/80" href="/register">
-                  Registrate
-                </Link>
-              </p>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+    <main className="auth-page">
+      <section className="auth-panel">
+        <h1>Welcome back</h1>
+        <p className="auth-description">Sign in to share a wall or manage your posts.</p>
+        {OAuthAccountNotLinked && (
+          <p className="form-error" role="alert">
+            Sign in with the account you originally used to confirm your identity.
+          </p>
+        )}
+        <form className="auth-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <div>
+            <label htmlFor="login-email">Email</label>
+            <input
+              id="login-email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              aria-invalid={Boolean(form.formState.errors.email)}
+              {...form.register("email")}
+            />
+            {form.formState.errors.email && (
+              <p className="form-error">{form.formState.errors.email.message}</p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="login-password">Password</label>
+            <input
+              id="login-password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Your password"
+              aria-invalid={Boolean(form.formState.errors.password)}
+              {...form.register("password")}
+            />
+            {form.formState.errors.password && (
+              <p className="form-error">{form.formState.errors.password.message}</p>
+            )}
+          </div>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <div className="auth-switch">
+            <span>New here?</span>
+            <Link href="/register">Create an account</Link>
+          </div>
+          <button className="auth-submit" type="submit" disabled={isPending}>
+            {isPending ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
+      </section>
+    </main>
   );
 };
+
 export default FormLogin;

@@ -18,24 +18,6 @@
       "sourceType": "github",
       "skillPath": "prisma-mongodb-upgrade/SKILL.md",
       "computedHash": "7496b8a66a2ed10cf5a530c838edeadf299f1ba16baa7513910bdc7264b4648f"
-    },
-    "prisma-next": {
-      "source": "prisma/prisma-next",
-      "sourceType": "github",
-      "skillPath": "skills/prisma-next/SKILL.md",
-      "computedHash": "0e12f86c73b9dad3e0de4326ac0f6ee804cb88bf9d515119268a79944adbf79f"
-    },
-    "prisma-next-runtime": {
-      "source": "prisma/prisma-next",
-      "sourceType": "github",
-      "skillPath": "skills/prisma-next-runtime/SKILL.md",
-      "computedHash": "7fc36488ca066cf592eaa07a564c184ebff534b4d3596d2c95c4ddb24f4119cd"
-    },
-    "prisma-orm-setup": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-orm-setup/SKILL.md",
-      "computedHash": "643210c92e79d080e8edb7fb7c13d939faa016f346c52bb54ee41796894d5e9e"
     }
   }
 }

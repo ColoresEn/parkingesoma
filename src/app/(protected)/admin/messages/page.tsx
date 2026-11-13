@@ -1,30 +1,20 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { auth } from "../../../../../auth";
+import { auth } from "@/auth";
 import { getContacts } from "@/actions/contact-action";
 import AdminMessagesTable from "@/components/admin/AdminMessagesTable";
 import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mensajes",
+  title: "Messages | Admin",
 };
 
 export default function MessagesPage() {
   return (
-    <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="m-0 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Mensajes
-        </h1>
-        <p className="m-0 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-          Lee y gestiona las consultas enviadas desde el formulario de contacto.
-        </p>
-      </header>
-      <Suspense fallback={<AdminPageSkeleton label="mensajes" />}>
-        <AdminMessagesContent />
-      </Suspense>
-    </div>
+    <Suspense fallback={<AdminPageSkeleton label="messages" />}>
+      <AdminMessagesContent />
+    </Suspense>
   );
 }
 
@@ -34,20 +24,29 @@ async function AdminMessagesContent() {
 
   if (session?.user?.role !== "ADMIN") {
     return (
-      <p role="alert" className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm">
-        Necesitas una cuenta de administrador para ver los mensajes.
-      </p>
+      <main className="page-frame section-page">
+        <h1 className="mb-3 text-3xl font-semibold">Admin access required</h1>
+        <p className="text-[var(--muted)]">
+          Sign in with an administrator account to view messages.
+        </p>
+      </main>
     );
   }
 
   const contacts = await getContacts();
 
   return (
-    <>
-      <p className="m-0 text-sm text-muted-foreground" aria-live="polite">
-        {contacts.length} {contacts.length === 1 ? "mensaje" : "mensajes"}
-      </p>
+    <main className="page-frame section-page">
+      <header className="section-intro">
+        <div>
+          <h1>Messages</h1>
+          <p>Read and manage messages sent through the contact form.</p>
+        </div>
+        <p className="m-0 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--paper-raised)] px-3 py-2 text-sm text-[var(--muted)]">
+          {contacts.length} {contacts.length === 1 ? "message" : "messages"}
+        </p>
+      </header>
       <AdminMessagesTable contacts={contacts} />
-    </>
+    </main>
   );
 }

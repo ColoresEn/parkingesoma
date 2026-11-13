@@ -1,14 +1,9 @@
 "use client";
 
-import type {
-  ChangeEventHandler,
-  HTMLInputTypeAttribute,
-} from "react";
-
 interface InputProps {
-  type?: HTMLInputTypeAttribute;
-  value?: string | number | readonly string[];
-  onChange?: ChangeEventHandler<HTMLInputElement>;
+  type: any;
+  value: any;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
   textarea?: boolean;
   id: string;
@@ -34,7 +29,7 @@ export default function Input({
       value={value}
       onChange={onChange}
       name={name}
-      className={`form-control py-2 mt-3 mb-3 form-control:hover form-control:focus  ${
+      className={`form-control py-2 mt-3 mb-3 form-control:hover p-2 bg-violet-500  form-control:focus  ${
         textarea ? "w-700px h-500px" : "w-full"
       } ${big ? "w-[400px] pb-[6rem]" : ""}`}
     />
