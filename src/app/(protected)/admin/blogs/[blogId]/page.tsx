@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "../../../../../../auth";
 import { Suspense } from "react";
 import getBlogsById from "@/actions/getBlogsById";
 import BlogId from "@/components/BlogId";

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "../../../../../auth";
 import { getContacts } from "@/actions/contact-action";
 import AdminMessagesTable from "@/components/admin/AdminMessagesTable";
 import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";
@@ -26,7 +26,7 @@ async function AdminMessagesContent() {
     return (
       <main className="page-frame section-page">
         <h1 className="mb-3 text-3xl font-semibold">Admin access required</h1>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted-foreground">
           Sign in with an administrator account to view messages.
         </p>
       </main>
@@ -42,7 +42,7 @@ async function AdminMessagesContent() {
           <h1>Messages</h1>
           <p>Read and manage messages sent through the contact form.</p>
         </div>
-        <p className="m-0 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--paper-raised)] px-3 py-2 text-sm text-[var(--muted)]">
+        <p className="m-0 rounded-(--radius) border border-(--line) bg-(--paper-raised) px-3 py-2 text-sm text-(--muted)">
           {contacts.length} {contacts.length === 1 ? "message" : "messages"}
         </p>
       </header>
