@@ -1,35 +1,52 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import Link from "next/link";
 import Providers from "./Providers";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
 import "./globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Sans, Space_Grotesk } from "next/font/google";
 import { TProvider } from "@/providers/toast-provider";
-import { Toaster } from "@/components/ui/toaster";
-import { cn } from "@/lib/utils";
-import { Suspense } from "react";
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+
+const display = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+const body = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
 
 export const metadata: Metadata = {
-  title: "Esoma Parking",
-  description: "Parking privado en el centro de Gandia",
+  title: "Murals & Criptos",
+  description: "Street art, places and the crypto market in one independent journal.",
 };
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={cn("dark", geist.variable, geistMono.variable)} suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className={`${display.variable} ${body.variable}`}>
         <Providers>
-          <div className="relative flex min-h-screen flex-col">
-            <Navbar />
-            <TProvider />
-            <Toaster />
-                 <Suspense
+          <Suspense
+            fallback={
+              <header className="site-header">
+                <div className="site-nav">
+                  <Link className="brand-lockup" href="/">
+                    <span className="brand-name">Murals &amp; Criptos</span>
+                  </Link>
+                </div>
+              </header>
+            }
+          >
+             <Navbar />
+          </Suspense>
+         
+          <TProvider />
+          <Suspense
             fallback={
               <main className="page-frame section-page">
                 <p className="empty-state" role="status">Loading the latest from the street...</p>
@@ -38,8 +55,7 @@ export default function RootLayout({
           >
             {children}
           </Suspense>
-            <Footer />
-          </div>
+          <Footer />
         </Providers>
       </body>
     </html>

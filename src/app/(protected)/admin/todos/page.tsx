@@ -1,57 +1,35 @@
 import { Suspense } from "react";
-import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { getUserTodoListAction } from "@/actions/todo.actions";
-import getCurrentUser from "@/actions/getCurrentUser";
 import AddTodoForm from "@/components/todos/AddTodoForm";
 import TodosTable from "@/components/todos/TodoTable";
-import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";
+import getCurrentUser from "@/actions/getCurrentUser";
 
-export const metadata: Metadata = {
-  title: "Tareas",
-};
-
-export default function TodosPage() {
+export default function Home() {
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-2">
-          <h1 className="m-0 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Tareas
-          </h1>
-          <p className="m-0 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Organiza tus pendientes y revisa lo que ya has completado.
-          </p>
-        </div>
-        <Suspense
-          fallback={
-            <div className="h-10 w-32 animate-pulse rounded-lg bg-muted" />
-          }
-        >
-          <AddTodoButton />
-        </Suspense>
-      </header>
-      <Suspense fallback={<AdminPageSkeleton label="tareas" />}>
-        <TodosContent />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <main className="container" role="status">
+          Loading todos...
+        </main>
+      }
+    >
+      <TodosPage />
+    </Suspense>
   );
 }
 
-async function AddTodoButton() {
+async function TodosPage() {
   const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    redirect("/login");
-  }
-  return <AddTodoForm userId={currentUser.id} />;
-}
+  if (!currentUser) return null;
+  const userId = currentUser?.id;
+  const todos = await getUserTodoListAction({ userId });
 
-async function TodosContent() {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    redirect("/login");
-  }
-
-  const todos = await getUserTodoListAction({ userId: currentUser.id });
-  return <TodosTable todos={todos} />;
+  return (
+    <main className="container">
+      <div className="mx-auto flex w-full lg:w-3/4 flex-col justify-center space-y-4 mt-10">
+        <AddTodoForm userId={userId} />
+        <TodosTable todos={todos} />
+      </div>
+    </main>
+  );
 }

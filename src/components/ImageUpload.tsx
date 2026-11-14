@@ -1,65 +1,51 @@
-import React, { useCallback, type ComponentProps } from 'react';
+import React, { useCallback } from 'react';
 import { CldUploadWidget } from 'next-cloudinary';
 import Image from 'next/image';
 import { TbPhotoPlus } from 'react-icons/tb';
+
+// Declaración global para Cloudinary (opcional si es necesario)
+declare global {
+  var cloudinary: any;
+}
 
 interface ImageUploadProps {
   onChange: (value: string) => void;
   value: string;
 }
 
-type UploadSuccess = NonNullable<
-  ComponentProps<typeof CldUploadWidget>["onSuccess"]
->;
-
 const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, value }) => {
-  const handleUpload = useCallback<UploadSuccess>(
-    (result) => {
-      const info = result.info;
-      if (
-        typeof info === "object" &&
-        info !== null &&
-        "secure_url" in info &&
-        typeof info.secure_url === "string"
-      ) {
-        onChange(info.secure_url);
-        return;
-      }
-
-      console.error("Cloudinary upload did not return a secure URL.");
+console.log('value', value)
+  // Maneja la carga exitosa de la imagen
+  const handleUpload = useCallback(
+    (result: any) => {
+      console.log('result.info.secure_url',result.info.secure_url)
+      onChange(result.info.secure_url);
     },
-    [onChange],
+    [onChange]
   );
 
   return (
     <CldUploadWidget
-      uploadPreset="ajukal8h"
+      uploadPreset='ajukal8h'
       options={{ maxFiles: 1 }}
-      onSuccess={handleUpload}
+     
+      onSuccess={handleUpload} // Uso de onSuccess también por compatibilidad con la biblioteca actual
     >
       {({ open }) => {
         return (
-          <button
-            type="button"
+          <div
             onClick={() => open?.()}
-            aria-label="Subir imagen de perfil"
-            className="relative flex h-36 w-36 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full border border-dashed border-border bg-muted/40 text-center transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="relative cursor-pointer hover:opacity-70 border-dashed border-2 flex flex-col justify-center items-center h-[300px] max-w-sm"
           >
-            <TbPhotoPlus aria-hidden="true" className="size-6" />
-            <span className="mt-2 px-3 text-xs">Subir imagen</span>
+            <TbPhotoPlus />
+            <div className="text-lg">Pulse para subir la imagen</div>
 
             {value && (
-              <div className="pointer-events-none absolute inset-0">
-                <Image
-                  alt=""
-                  fill
-                  sizes="144px"
-                  className="object-cover"
-                  src={value}
-                />
+              <div className="absolute inset-0 w-full h-full">
+                <Image alt="upload" sizes="100%" fill style={{ objectFit: 'cover' }} src={value} />
               </div>
             )}
-          </button>
+          </div>
         );
       }}
     </CldUploadWidget>

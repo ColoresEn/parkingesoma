@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { updateUser } from "@/actions/user-action";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import ImageUpload from "./ImageUpload";
+import { useRouter } from "next/navigation";
+import Input from "./input/Input";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 interface UserProps {
   name: string;
   email: string;
@@ -16,75 +15,100 @@ interface UserProps {
   userId: string;
 }
 
-export default function AdminUserEditForm({
+export default function UserEditForm({
   name,
   email,
   image,
   userId,
 }: UserProps) {
   const router = useRouter();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [state, setState] = useState({ name, email, image, userId });
-
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const initialState = {
+    name,
+    email,
+    image,
+    userId,
+  };
+  const [state, setState] = useState(initialState);
+  const { toast } = useToast();
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    setState({ ...state, [event.target.name]: event.target.value });
+  }
+  const onSubmit = async (event: FormEvent) => {
     setIsLoading(true);
+
+    event.preventDefault();
     try {
       await updateUser(state);
-      toast({ description: "Se ha actualizado el usuario." });
+      toast({ description: "User updated." });
       router.push("/admin/users");
       router.refresh();
-    } catch {
+    } catch (error) {
       toast({
         variant: "destructive",
-        description: "No se pudo actualizar el usuario. Inténtalo de nuevo.",
+        description: "An error occurred. Please try again.",
       });
-    } finally {
-      setIsLoading(false);
     }
-  }
+  };
+
+  const setCustomValue = (id: any, value: any) => {
+    setState((prevValues) => ({
+      ...prevValues,
+      [id]: value,
+    }));
+  };
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="surface-panel w-full max-w-2xl space-y-5 p-5 sm:p-7"
-    >
-      <div className="space-y-2">
-        <p className="text-sm font-medium">Imagen de perfil</p>
-        <ImageUpload
-          value={state.image}
-          onChange={(image) => setState((current) => ({ ...current, image }))}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="user-name">Nombre</Label>
-        <Input
-          id="user-name"
-          name="name"
-          autoComplete="name"
-          value={state.name}
-          onChange={(event) =>
-            setState((current) => ({ ...current, name: event.target.value }))
-          }
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="user-email">Correo electrónico</Label>
-        <Input
-          id="user-email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          value={state.email}
-          onChange={(event) =>
-            setState((current) => ({ ...current, email: event.target.value }))
-          }
-        />
-      </div>
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? "Guardando…" : "Guardar cambios"}
-      </Button>
-    </form>
+    <div className="container  mt-5 md:rounded-2xl  shadow-md shadow-black -inset-40 w-full sm:max-w-fit md:max-w-fit  mx-auto border border-[#121212] ">
+      <h1 className=" text-center text-2xl">Edit user</h1>
+
+      <form onSubmit={onSubmit}>
+       
+          <div className=" text-left  ">
+            <Label htmlFor="name" className=" m-1 ">
+              <h5> Change avatar:</h5>
+            </Label>
+            <ImageUpload
+              value={state.image as string}
+              onChange={(value) => setCustomValue("image", value)}
+            />
+          </div>
+          <div className=" text-left text-black">
+            <Label htmlFor="name" className=" m-1">
+              <h5>Change name:</h5>
+            </Label>
+            <Input
+              placeholder="Name"
+              id="name"
+              type="text"
+              value={state.name}
+              name="name"
+              onChange={handleChange}
+            />
+            <Label htmlFor="email" className=" m-1">
+              <h5>Change Email:</h5>
+            </Label>
+            <Input
+              placeholder="Email"
+              id="email"
+              type="text"
+              value={state.email}
+              name="email"
+              onChange={handleChange}
+            />
+            <div></div>
+            <div className="flex justify-end text-left p-2 ">
+              <Button
+                type="submit"
+                className=" uppercase text-sky-300 hover:text-white"
+                disabled={isLoading}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        
+      </form>
+    </div>
   );
 }

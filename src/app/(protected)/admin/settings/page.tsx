@@ -1,35 +1,29 @@
 import { Suspense } from "react";
-import type { Metadata } from "next";
-import Image from "next/image";
-import { redirect } from "next/navigation";
+import { Metadata } from "next";
 import avatarPlaceholder from "@/assets/images/avatar_placeholder.png";
-import getCurrentUser from "@/actions/getCurrentUser";
+import { redirect } from "next/navigation";
 import UserEditForm from "@/components/UserEditForm";
-import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";
-
+import Image from "next/image";
+import getCurrentUser from "@/actions/getCurrentUser";
 export const metadata: Metadata = {
-  title: "Mi perfil",
+  title: "Profile"
 };
 
-export default function SettingsPage() {
+export default function Page() {
   return (
-    <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="m-0 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Mi perfil
-        </h1>
-        <p className="m-0 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-          Revisa y actualiza la información de tu cuenta.
-        </p>
-      </header>
-      <Suspense fallback={<AdminPageSkeleton label="perfil" />}>
-        <ProfileContent />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <main className="page-frame section-page" role="status">
+          Loading profile...
+        </main>
+      }
+    >
+      <ProfilePage />
+    </Suspense>
   );
 }
 
-async function ProfileContent() {
+async function ProfilePage() {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -37,68 +31,57 @@ async function ProfileContent() {
   }
 
   return (
-    <div className="space-y-5">
-      <section
-        aria-labelledby="profile-summary-title"
-        className="surface-panel p-5 sm:p-7"
-      >
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <Image
-            src={currentUser.image || avatarPlaceholder}
-            alt=""
-            width={88}
-            height={88}
-            priority
-            className="size-20 rounded-full object-cover ring-1 ring-border"
-          />
-          <div className="min-w-0">
-            <h2
-              id="profile-summary-title"
-              className="m-0 text-xl font-semibold tracking-tight"
-            >
-              {currentUser.name || "Tu cuenta"}
-            </h2>
-            <p className="m-0 mt-1 break-all text-sm text-muted-foreground">
-              {currentUser.email}
-            </p>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {currentUser?.name && (
+        <div className="row">
+          <div className="flex w-full md:my-6 md:max-w-2xl md:px-2 lg:max-w-4xl">
+            <div className="relative flex w-full items-center overflow-hidden rounded-md  px-4 pt-5   sm:px-4  md:p-6 lg:p-8">
+              <div className="flex min-h-full items-stretch justify-center  text-center md:items-center md:px-2 lg:px-4">
+                <div className="grid w-full grid-cols-1 items-start gap-y-8 gap-x-6 sm:grid-cols-12 lg:gap-x-8">
+                  <div className="aspect-w-2 aspect-h-3 overflow-hidden rounded-lg sm:col-span-4 lg:col-span-5 mx-auto border-gray-900 shadow-md shadow-black">
+                    <Image
+                      src={currentUser?.image || avatarPlaceholder}
+                      alt={currentUser?.name}
+                      width={200}
+                      height={200}
+                      priority
+                       className="w-auto h-auto object-cover object-center "
+                    />
+                  </div>
+                  <div className="sm:col-span-8 lg:col-span-7 ">
+                    <div className="flex ">
+                      <h3 className="text-2xl font-bold text-white sm:pr-12 mb-3">
+                      <span>Name:</span>   {currentUser?.name}{" "}
+                      </h3>
+                      </div>
+                      <p>
+                        {" "}
+                        <span>Email:</span> {currentUser.email}
+                      </p>
+                      <p className="my-2">
+                        <span className="mr-1 ">Desde:</span>
+                        {new Date(currentUser.createdAt).toLocaleDateString()}
+                      </p>
+                      <p>
+                        {" "}
+                        <span className="mr-1 ">Id:</span> {currentUser.id}
+                      </p>
+                      <div className="mt-8">
+                      <UserEditForm
+                        name={currentUser?.name}
+                        image={currentUser?.image as string}
+                        userId={currentUser?.id}
+                        email={currentUser?.email as string}
+                      />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <dl className="mt-6 grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
-          <div>
-            <dt className="text-sm text-muted-foreground">Miembro desde</dt>
-            <dd className="m-0 mt-1 font-medium">
-              <time dateTime={currentUser.createdAt}>
-                {new Intl.DateTimeFormat("es-ES", {
-                  dateStyle: "long",
-                }).format(new Date(currentUser.createdAt))}
-              </time>
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm text-muted-foreground">Rol de cuenta</dt>
-            <dd className="m-0 mt-1 font-medium">
-              {currentUser.role === "ADMIN" ? "Administrador" : "Usuario"}
-            </dd>
-          </div>
-        </dl>
-      </section>
-      <section
-        aria-labelledby="profile-edit-title"
-        className="surface-panel p-5 sm:p-7"
-      >
-        <h2 id="profile-edit-title" className="m-0 text-lg font-semibold">
-          Datos del perfil
-        </h2>
-        <p className="mb-4 mt-1 text-sm text-muted-foreground">
-          Cambia tu nombre, correo o imagen de perfil.
-        </p>
-        <UserEditForm
-          name={currentUser.name || ""}
-          image={currentUser.image || ""}
-          userId={currentUser.id}
-          email={currentUser.email || ""}
-        />
-      </section>
+       
+      )}
     </div>
   );
 }

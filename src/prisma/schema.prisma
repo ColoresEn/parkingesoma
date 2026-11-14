@@ -63,6 +63,8 @@ model User {
   role           Role      @default(USER)
   accounts       Account[]
   comments       Comment[]
+  muralComments  MuralComment[]
+  listings       Listing[]
 }
 
 model Contact {
@@ -93,4 +95,27 @@ model Todo {
   user_id   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Listing {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  createdAt DateTime @default(now())
+  imageSrc String
+  description String
+  visitUrl String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+  likedIds String[]  @db.ObjectId
+  comments MuralComment[]
+}
+
+model MuralComment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  userId    String   @db.ObjectId
+  muralId   String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mural     Listing  @relation(fields: [muralId], references: [id], onDelete: Cascade)
 }

@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { UpdateProfileValues, updateProfileSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,9 +25,11 @@ interface SettingsPageProps {
 }
 
 export default function SettingsPage({ user }: SettingsPageProps) {
+  const router = useRouter();
   const { toast } = useToast();
   const session = useSession();
   const [onActive, setOnActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<UpdateProfileValues>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
@@ -43,7 +46,7 @@ export default function SettingsPage({ user }: SettingsPageProps) {
       session.update();
      
     
-    } catch {
+    } catch (error) {
       toast({
         variant: "destructive",
         description: "An error occurred. Please try again.",
@@ -52,8 +55,8 @@ export default function SettingsPage({ user }: SettingsPageProps) {
   }
 
   return (
-    <div className="container block  md:rounded-2xl px-6 py-4 shadow-input   ">
-    <div className="justify-between  ">
+    <div className="container block  md:rounded-2xl  shadow-input   ">
+    <div className="justify-between items-center ">
       <Button
         onClick={() => setOnActive(!onActive)}
         className="uppercase text-white hover:text-violet-500 text-2xl"
