@@ -1,25 +1,16 @@
 "use client";
 
 import avatarPlaceholder from "@/assets/images/avatar_placeholder.png";
+import { logoutAction } from "@/actions/auth-action";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import type { User } from "next-auth";
-import { useRouter } from "next/navigation";
 
 interface UserButtonProps {
   user: User;
 }
 
 const UserButton = ({ user }: UserButtonProps) => {
-  const router = useRouter();
-
-  async function handleSignOut() {
-    await signOut({ redirect: false });
-    router.push("/");
-    router.refresh();
-  }
-
   return (
     <details className="account-menu">
       <summary className="avatar-trigger" aria-label="Open account menu">
@@ -42,11 +33,9 @@ const UserButton = ({ user }: UserButtonProps) => {
             <Link href="/admin/messages">Messages</Link>
           </>
         )}
-        <button type="button"  onClick={async () => {
-            await signOut({ redirect: false });
-            router.push("/");
-            router.refresh();
-          }}>Sign out</button>
+        <form action={logoutAction}>
+          <button type="submit">Sign out</button>
+        </form>
       </nav>
     </details>
   );
