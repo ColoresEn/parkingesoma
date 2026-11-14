@@ -29,6 +29,7 @@ const UserButton = ({ user }: UserButtonProps) => {
         <Link href="/create">Share a wall</Link>
         {user.role === "ADMIN" && (
           <>
+            <Link href="/admin/dashboard">Dashboard</Link>
             <Link href="/admin/users">Users</Link>
             <Link href="/admin/messages">Messages</Link>
           </>

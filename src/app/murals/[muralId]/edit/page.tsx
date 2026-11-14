@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "../../../../../auth";
 import BlogId from "@/components/BlogId";
 import { db } from "@/lib/db";
 import { Suspense } from "react";

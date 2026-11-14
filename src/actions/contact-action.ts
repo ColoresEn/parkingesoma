@@ -1,7 +1,7 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { auth } from "@/auth";
+import { auth } from "../../auth";
 import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();

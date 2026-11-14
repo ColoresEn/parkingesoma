@@ -1,7 +1,10 @@
-import { auth } from "@/auth";
+import { auth } from "../../auth";
 import { db } from "@/lib/db";
+import { connection } from "next/server";
 
 export default async function getCurrentUser() {
+  await connection();
+
   try {
     const session = await auth();
 

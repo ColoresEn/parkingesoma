@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "../../../../auth";
 import { db } from "@/lib/db";
 import MuralDetail from "@/components/MuralDetail";
 

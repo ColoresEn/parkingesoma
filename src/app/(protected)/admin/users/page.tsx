@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "../../../../../auth";
 import getUsers from "@/actions/getUsers";
 import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";
 import AdminUsersDirectory from "@/components/admin/AdminUsersDirectory";
